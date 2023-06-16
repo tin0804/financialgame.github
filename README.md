@@ -1,0 +1,149 @@
+# financialgame.github
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Financial Literacy Game</title>
+  <style>
+    body {
+      background-color: lightblue;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    body {
+      background-image: url("https://media.tenor.com/Xeb9tTynzMoAAAAi/jagyasini-jagyasini-singh.gif");
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: bold;
+      color: black;
+      text-shadow: 0 0 30px white;
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: bold;
+      color: black;
+      text-shadow: 0 0 30px white;
+    }
+
+    label,
+    p,
+    input,
+    button {
+      font-size: 40px;
+      bold;
+      color: black;
+      text-shadow: 0 0 20px white;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Welcome to the Financial Literacy Game!</h1>
+  <label for="player-name">Enter your name:</label>
+  <input type="text" id="player-name">
+  <button onclick="startGame()">Start Game</button>
+
+  <div id="game-container" style="display: none;">
+    <h2 id="round-title">Round 1</h2>
+    <p id="player-info"></p>
+    <p id="question"></p>
+    <input type="text" id="answer-input">
+    <button onclick="submitAnswer()">Submit Answer</button>
+  </div>
+
+  <script>
+    // Player class to store player information
+    class Player {
+      constructor(name) {
+        this.name = name;
+        this.balance = 1000;
+        this.score = 0;
+      }
+      toString() {
+        return `${this.name} - Balance: $${this.balance} - Score: ${this.score}`;
+      }
+    }
+    let player;
+    let round = 1;
+    let questions; // Declare the questions array as a global variable
+    function startGame() {
+      const playerNameInput = document.getElementById("player-name");
+      const playerName = playerNameInput.value.trim();
+      if (playerName === "") {
+        alert("Please enter your name.");
+        return;
+      }
+      player = new Player(playerName);
+      document.getElementById("player-info").textContent = `Player: ${player.name} - Balance: $${player.balance} - Score: ${player.score}`;
+      document.getElementById("game-container").style.display = "block";
+      document.getElementById("round-title").textContent = `Round ${round}`;
+      questions = generateQuestions(); // Assign the generated questions to the global variable
+      playerNameInput.disabled = true;
+    }
+
+    function submitAnswer() {
+      const playerAnswer = document.getElementById("answer-input").value.trim();
+      if (playerAnswer === "") {
+        alert("Please enter your answer.");
+        return;
+      }
+      const answer = getCurrentAnswer();
+      const isCorrectAnswer = playerAnswer.toLowerCase() === answer.toLowerCase();
+      if (isCorrectAnswer) {
+        console.log("Correct answer!");
+        player.score += 1;
+        player.balance += 100;
+      } else {
+        console.log("Incorrect answer!");
+        player.balance -= 100;
+      }
+      round++;
+      if (player.balance <= 0) {
+        console.log("Game over! You ran out of money.");
+        endGame();
+      } else {
+        document.getElementById("round-title").textContent = `Round ${round}`;
+        document.getElementById("player-info").textContent = `Player: ${player.name} - Balance: $${player.balance} - Score: ${player.score}`;
+        document.getElementById("question").textContent = generateQuestion();
+        document.getElementById("answer-input").value = "";
+      }
+    }
+
+    function endGame() {
+      document.getElementById("game-container").style.display = "none";
+      console.log(`\nFinal Score: ${player.score}`);
+      console.log(`Final Balance: $${player.balance}`);
+    }
+
+    function generateQuestions() {
+      return [
+        ["What is the concept of compound interest?", "Interest earned on both the initial principal and the accumulated interest"],
+        ["What is the difference between a debit card and a credit card?", "Debit card uses the money you have, credit card borrows money"],
+        ["What does ROI stand for in finance?", "Return on Investment"],
+        ["What is the purpose of a budget?", "To track income and expenses"],
+        ["What is the importance of diversification in investing?", "To spread risk across different assets"]
+      ];
+    }
+
+    function generateQuestion() {
+      return questions[Math.floor(Math.random() * questions.length)][0]; // Only return the question, not the answer
+    }
+
+    function getCurrentAnswer() {
+      const questionIndex = Math.floor(Math.random() * questions.length);
+      return questions[questionIndex][1]; // Return only the answer
+    }
+  </script>
+</body>
+
+</html>
